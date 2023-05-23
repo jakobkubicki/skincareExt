@@ -6,7 +6,7 @@ Currently, this extension is in the early stages of development. It is being bui
 
 ## Installation
 
-Use npm (node package manager) to install the necessary packages. 
+Use npm to install the necessary packages. 
 
 ```
 npm install
