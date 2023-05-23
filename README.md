@@ -4,7 +4,7 @@ Skincare Extension is a Chrome extension that scans a webpage for skincare produ
 
 Currently, this extension is in the early stages of development. It is being built with TypeScript, ReactJS, and Node Package Manager. 
 
-## 📦 Installation
+## Installation
 
 Use npm (node package manager) to install the necessary packages. 
 
@@ -17,7 +17,7 @@ Build the application using
 npm run build
 ```
 
-## 🚀 Usage
+## Usage
 
 After the packages are installed and the application is built, you can run the extension by following these steps:
 
@@ -28,7 +28,7 @@ After the packages are installed and the application is built, you can run the e
 
 You're now all set to start using the Skincare Extension. Simply navigate to a webpage with skincare products and click the extension icon. The extension will scan the page and display a list of the active ingredients and their potential side effects.
 
-## 🤝 Contributing
+## Contributing
 
 This is an open source project. Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
@@ -48,7 +48,7 @@ To contribute, follow these steps:
 
 Please make sure to update tests as appropriate.
 
-## 📜 License
+## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
