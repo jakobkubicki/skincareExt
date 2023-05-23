@@ -35,6 +35,7 @@ This is an open source project. Pull requests are welcome. For major changes, pl
 You can reach out to the main contributors via GitHub:
 
 🚀 Jakob Kubicki: [Jakob Kubicki](https://github.com/jakobkubicki)
+
 🌟 Grayson Cooper: [Grayson Cooper](https://github.com/graycoop)
 
 To contribute, follow these steps:
