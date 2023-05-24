@@ -1,65 +1,105 @@
-import React from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Container from '@mui/material/Container'
+import { Box } from '@mui/system'
+import CircularProgress from '@mui/material/CircularProgress'
+import SearchIcon from '@mui/icons-material/Search'
+import { green } from '@mui/material/colors'
+import Typography from '@mui/material/Typography'
+import { styled } from '@mui/material/styles'
 
-// Improved mock data
-const skincareProducts = [
-  {
-    name: 'Super Hydrating Moisturizer',
-    ingredients: ['Hyaluronic Acid', 'Ceramides', 'Glycerin'],
-    sideEffects: ['Minor skin irritation', 'Redness'],
-    link: 'http://www.example.com/product1', // Update with actual link
-  },
-  {
-    name: 'Revitalizing Eye Cream',
-    ingredients: ['Retinol', 'Peptides', 'Vitamin C'],
-    sideEffects: ['Dryness', 'Peeling'],
-    link: 'http://www.example.com/product2', // Update with actual link
-  },
-  // Add more products as necessary
-];
+const App: React.FC = () => {
+  const [selectedText, setSelectedText] = useState('')
+  const [finalSelectedText, setFinalSelectedText] = useState('') // to remember the user's final selection
+  const [mode, setMode] = useState('idle') // idle, selecting, analyzing
 
-function App() {
+  const StyledButton = styled(Button)(({ theme }) => ({
+    color: theme.palette.getContrastText(green[500]),
+    backgroundColor: green[500],
+    '&:hover': {
+      backgroundColor: green[700]
+    }
+  }))
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.message === 'selected_text') {
+        setSelectedText(request.text)
+      } else if (request.message === 'selected_text_done') {
+        setMode('idle')
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && mode === 'selecting') {
+        setMode('analyzing')
+        setFinalSelectedText(selectedText) // Save the final selection when Enter is pressed
+        chrome.runtime.sendMessage({
+          message: 'analyze_product',
+          text: selectedText
+        })
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress)
+    }
+  }, [mode, selectedText])
+
+  const handleAnalyzeClick = () => {
+    setMode('selecting')
+    chrome.runtime.sendMessage({ message: 'start_selection' })
+  }
+
   return (
-    <Box className="App" sx={{ width: '80%', margin: 'auto' }}>
-      <Typography variant="h3" gutterBottom>Welcome to the Ube Tube!</Typography>
-
-      {skincareProducts.map((product, index) => (
-        <Box key={index} sx={{ my: 4 }}>
-          <Typography variant="h5" gutterBottom>{product.name}</Typography>
-
-          <TableContainer component={Paper} sx={{ mt: 1, boxShadow: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'text.primary' }}>Ingredients</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'text.primary' }}>Potential Side Effects</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: 'text.primary' }}>Product Link</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    {product.ingredients.map((ingredient, i) => (
-                      <Typography key={i} variant="body1" gutterBottom>{ingredient}</Typography>
-                    ))}
-                  </TableCell>
-                  <TableCell>
-                    {product.sideEffects.map((sideEffect, i) => (
-                      <Typography key={i} variant="body1" gutterBottom>{sideEffect}</Typography>
-                    ))}
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="outlined" href={product.link} target="_blank">Go to product</Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      ))}
-    </Box>
-  );
+    <Container maxWidth='sm'>
+      <Box
+        display='flex'
+        flexDirection='column'
+        justifyContent='center'
+        alignItems='center'
+        height='100vh'
+      >
+        <Typography variant='h4' component='div' gutterBottom>
+          🌿 Skincare Product Analyzer
+        </Typography>
+        {mode === 'idle' ? (
+          <StyledButton
+            startIcon={<SearchIcon />}
+            variant='contained'
+            onClick={handleAnalyzeClick}
+          >
+            Analyze Product
+          </StyledButton>
+        ) : mode === 'selecting' ? (
+          <TextField
+            id='outlined-basic-read-only-input'
+            label='Selected Text'
+            defaultValue=''
+            InputProps={{
+              readOnly: true
+            }}
+            variant='filled'
+            value={selectedText}
+          />
+        ) : (
+          <Box display='flex' flexDirection='column' alignItems='center'>
+            <Typography variant='h6' gutterBottom>
+              Searching for {finalSelectedText}...
+            </Typography>
+            <Box mt={2}>
+              <CircularProgress color='inherit' />
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Container>
+  )
 }
 
-export default App;
+export default App
