@@ -36,7 +36,7 @@ You can reach out to the main contributors via GitHub:
 
 🚀 Jakob Kubicki: [Jakob Kubicki](https://github.com/jakobkubicki)
 
-🌟 Grayson Cooper: [Grayson Cooper](https://github.com/grayonacooper)
+🌟 Grayson Cooper: [Grayson Cooper](https://github.com/graysonacooper)
 
 To contribute, follow these steps:
 
